@@ -1,0 +1,10 @@
+{
+  "network": "default",
+  "chainId": 31337,
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "staking": "0x5FbDB2315678afecb367f032d93F642f64180aa3",
+  "rewardRate": "100000000000000",
+  "lockPeriod": 60,
+  "rewardPool": "10000000000000000",
+  "assetSymbol": "ETH"
+}

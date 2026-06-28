@@ -1,0 +1,10 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "deployer": "0x287FFc821362C2Ded90038cEa9dbD50CBc35c515",
+  "staking": "0x4B5d60789F120B6277FC2647502777D813F29848",
+  "rewardRate": "1000000000000",
+  "lockPeriod": 60,
+  "rewardPool": "10000000000000000",
+  "assetSymbol": "SepoliaETH"
+}

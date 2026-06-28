@@ -1,0 +1,10 @@
+node_modules/
+frontend/node_modules/
+artifacts/
+cache/
+coverage/
+typechain-types/
+frontend/dist/
+frontend/src/abi/*.json
+frontend/src/config/contracts.js
+.env

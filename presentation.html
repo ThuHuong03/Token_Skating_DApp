@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Secure Native ETH Staking DApp - Blockchain Presentation</title>
+  <style>
+    :root {
+      --bg: #f5f7fc;
+      --card: #ffffff;
+      --ink: #1f2937;
+      --muted: #65738a;
+      --blue: #6f91d8;
+      --blue-soft: #eaf1ff;
+      --green: #168047;
+      --green-soft: #e7f8ee;
+      --red: #b52828;
+      --red-soft: #ffe8e8;
+      --yellow: #8a5a00;
+      --yellow-soft: #fff4d9;
+      --line: #dfe7f5;
+      --shadow: 0 18px 40px rgba(59, 81, 122, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      height: 100vh;
+      line-height: 1.55;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .deck {
+      margin: 0 auto;
+      max-width: 1180px;
+      padding: 24px;
+      width: 100%;
+    }
+
+    .slide {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      display: none;
+      min-height: calc(100vh - 120px);
+      opacity: 0;
+      overflow: auto;
+      padding: 44px;
+      page-break-after: always;
+      transform: translateY(18px) scale(0.985);
+    }
+
+    .slide.active {
+      animation: slideIn 420ms ease both;
+      display: block;
+    }
+
+    .slide.active > * {
+      animation: contentIn 540ms ease both;
+    }
+
+    .cover {
+      align-items: center;
+      background: linear-gradient(135deg, #dce8ff, #f7fbff);
+      min-height: 720px;
+    }
+
+    .cover.active {
+      display: grid;
+    }
+
+    .eyebrow {
+      color: var(--blue);
+      font-size: 0.78rem;
+      font-weight: 850;
+      letter-spacing: 0.14em;
+      margin: 0 0 10px;
+      text-transform: uppercase;
+    }
+
+    h1 {
+      font-size: clamp(3rem, 7vw, 5.6rem);
+      line-height: 0.95;
+      margin: 0 0 18px;
+      max-width: 920px;
+    }
+
+    h2 {
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      line-height: 1.05;
+      margin: 0 0 22px;
+    }
+
+    h3 {
+      font-size: 1.28rem;
+      margin: 0 0 8px;
+    }
+
+    p {
+      margin: 0 0 14px;
+    }
+
+    .lead {
+      color: var(--muted);
+      font-size: 1.22rem;
+      max-width: 860px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 18px;
+    }
+
+    .grid.two {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .grid.three {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .box {
+      background: #f8fbff;
+      border: 1px solid #e4ecf8;
+      border-radius: 20px;
+      padding: 20px;
+    }
+
+    .box.green {
+      background: var(--green-soft);
+      border-color: #c8ecd5;
+    }
+
+    .box.red {
+      background: var(--red-soft);
+      border-color: #f1c6c6;
+    }
+
+    .box.yellow {
+      background: var(--yellow-soft);
+      border-color: #f5dfa6;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    ul,
+    ol {
+      margin: 0;
+      padding-left: 1.25rem;
+    }
+
+    li {
+      margin: 0 0 10px;
+    }
+
+    code,
+    pre {
+      font-family: "Cascadia Code", "Fira Code", Consolas, monospace;
+    }
+
+    pre {
+      background: #172033;
+      border-radius: 18px;
+      color: #eaf1ff;
+      overflow-x: auto;
+      padding: 18px;
+      white-space: pre;
+    }
+
+    .flow {
+      counter-reset: step;
+      display: grid;
+      gap: 14px;
+    }
+
+    .step {
+      align-items: center;
+      background: #f8fbff;
+      border: 1px solid #e4ecf8;
+      border-radius: 18px;
+      display: grid;
+      gap: 10px;
+      grid-template-columns: 46px 1fr;
+      padding: 16px;
+    }
+
+    .step::before {
+      align-items: center;
+      background: var(--blue);
+      border-radius: 14px;
+      color: white;
+      content: counter(step);
+      counter-increment: step;
+      display: flex;
+      font-weight: 850;
+      height: 46px;
+      justify-content: center;
+      width: 46px;
+    }
+
+    .pill-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .pill {
+      background: var(--blue-soft);
+      border-radius: 999px;
+      color: #4f72bb;
+      font-weight: 800;
+      padding: 8px 12px;
+    }
+
+    .table {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      overflow: hidden;
+    }
+
+    .row {
+      display: grid;
+      grid-template-columns: 260px 1fr;
+    }
+
+    .row > div {
+      border-bottom: 1px solid var(--line);
+      padding: 12px 16px;
+    }
+
+    .row:last-child > div {
+      border-bottom: 0;
+    }
+
+    .row > div:first-child {
+      background: #f8fbff;
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .footer-note {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-top: 24px;
+    }
+
+    .presentation-controls {
+      align-items: center;
+      backdrop-filter: blur(16px);
+      background: rgba(255, 255, 255, 0.86);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      bottom: 18px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 12px;
+      left: 50%;
+      padding: 10px 12px;
+      position: fixed;
+      transform: translateX(-50%);
+      z-index: 20;
+    }
+
+    .presentation-controls button {
+      background: var(--blue);
+      border: 0;
+      border-radius: 999px;
+      color: white;
+      cursor: pointer;
+      font: inherit;
+      font-weight: 800;
+      padding: 10px 16px;
+      transition: transform 160ms ease, opacity 160ms ease, background 160ms ease;
+    }
+
+    .presentation-controls button:hover:not(:disabled) {
+      background: #5578c6;
+      transform: translateY(-1px);
+    }
+
+    .presentation-controls button:disabled {
+      cursor: not-allowed;
+      opacity: 0.38;
+    }
+
+    .slide-status {
+      color: var(--muted);
+      font-weight: 850;
+      min-width: 72px;
+      text-align: center;
+    }
+
+    .progress {
+      background: rgba(111, 145, 216, 0.18);
+      height: 6px;
+      left: 0;
+      position: fixed;
+      right: 0;
+      top: 0;
+      z-index: 30;
+    }
+
+    .progress-bar {
+      background: var(--blue);
+      height: 100%;
+      transition: width 320ms ease;
+      width: 0;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateY(18px) scale(0.985);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @keyframes contentIn {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @media (max-width: 900px) {
+      body {
+        overflow: auto;
+      }
+
+      .deck {
+        padding: 14px 14px 86px;
+      }
+
+      .slide {
+        min-height: calc(100vh - 110px);
+        padding: 26px;
+      }
+
+      .presentation-controls {
+        bottom: 10px;
+        width: calc(100% - 20px);
+      }
+
+      .presentation-controls button {
+        flex: 1;
+        padding: 10px 12px;
+      }
+
+      .grid.two,
+      .grid.three,
+      .row {
+        grid-template-columns: 1fr;
+      }
+
+      h1 {
+        font-size: 3rem;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+        height: auto;
+        overflow: visible;
+      }
+
+      .deck {
+        max-width: none;
+        padding: 0;
+      }
+
+      .slide {
+        border: 0;
+        border-radius: 0;
+        display: block !important;
+        box-shadow: none;
+        min-height: 100vh;
+        opacity: 1 !important;
+        transform: none !important;
+      }
+
+      .presentation-controls,
+      .progress {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="progress" aria-hidden="true">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <main class="deck">
+    <section class="slide cover active">
+      <div>
+        <p class="eyebrow">Bài thuyết trình môn Blockchain</p>
+        <h1>Secure Native ETH Staking DApp</h1>
+        <p class="lead">Ứng dụng DeFi staking trên mạng Sepolia: người dùng stake native ETH, nhận reward theo thời gian, protocol thu phí cho admin, toàn bộ hoạt động quan trọng được ghi nhận bằng event on-chain.</p>
+        <div class="pill-row">
+          <span class="pill">Solidity</span>
+          <span class="pill">React + Vite</span>
+          <span class="pill">MetaMask</span>
+          <span class="pill">Sepolia</span>
+          <span class="pill">Chainlink Oracle</span>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Vấn đề & ý tưởng</p>
+      <h2>Bài toán đặt ra</h2>
+      <div class="grid two">
+        <div class="box">
+          <h3>Nhu cầu của người dùng</h3>
+          <ul>
+            <li>Stake SepoliaETH để nhận phần thưởng theo thời gian.</li>
+            <li>Xem reward, thời gian mở khóa, phí và lịch sử giao dịch.</li>
+            <li>Rút tiền sau thời gian khóa hoặc rút khẩn cấp khi cần.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Nhu cầu của admin</h3>
+          <ul>
+            <li>Nạp reward pool để trả thưởng cho user.</li>
+            <li>Điều chỉnh reward rate, lock period, claim fee, emergency fee.</li>
+            <li>Tạm dừng protocol khi có rủi ro và thu protocol fees.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="box green" style="margin-top: 18px;">
+        <h3>Giá trị của demo</h3>
+        <p>Dự án minh họa cách smart contract giữ tài sản, áp dụng luật nghiệp vụ, ghi event và cho phép frontend Web3 tương tác thông qua MetaMask trên public testnet.</p>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Các vai trò</p>
+      <h2>Thành phần tham gia</h2>
+      <div class="grid three">
+        <div class="box">
+          <h3>Người dùng</h3>
+          <p class="muted">Người stake SepoliaETH.</p>
+          <ul>
+            <li>Stake phần vốn gốc.</li>
+            <li>Claim reward sau thời gian khóa.</li>
+            <li>Unstake hoặc rút khẩn cấp.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Quản trị viên</h3>
+          <p class="muted">Chủ sở hữu protocol.</p>
+          <ul>
+            <li>Nạp reward pool.</li>
+            <li>Cập nhật luật và phí.</li>
+            <li>Tạm dừng/mở lại protocol và rút protocol fees.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Hợp đồng thông minh</h3>
+          <p class="muted">Nguồn dữ liệu đúng trên blockchain.</p>
+          <ul>
+            <li>Giữ ETH và tính reward.</li>
+            <li>Thu phí và emit event.</li>
+            <li>Áp dụng các ràng buộc bảo mật.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Kiến trúc</p>
+      <h2>Kiến trúc tổng quan</h2>
+      <div class="flow">
+        <div class="step"><div><strong>MetaMask</strong><br /><span class="muted">Người dùng/admin ký transaction trên mạng Sepolia.</span></div></div>
+        <div class="step"><div><strong>React Frontend</strong><br /><span class="muted">Hiển thị dashboard, form thao tác, activity và lỗi dễ hiểu.</span></div></div>
+        <div class="step"><div><strong>ethers.js</strong><br /><span class="muted">Đọc state và gửi transaction tới smart contract.</span></div></div>
+        <div class="step"><div><strong>EthStaking Contract</strong><br /><span class="muted">Xử lý stake, reward, withdraw và quyền quản trị.</span></div></div>
+        <div class="step"><div><strong>ProtocolFees Contract</strong><br /><span class="muted">Tính phí claim/emergency và gom doanh thu protocol.</span></div></div>
+        <div class="step"><div><strong>Sepolia + Chainlink</strong><br /><span class="muted">Mạng testnet công khai và nguồn giá ETH/USD tham chiếu.</span></div></div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Smart contracts</p>
+      <h2>Cấu trúc contract</h2>
+      <div class="grid two">
+        <div class="box">
+          <h3>EthStaking.sol</h3>
+          <ul>
+            <li>Contract chính quản lý toàn bộ vòng đời staking.</li>
+            <li>Giữ ETH của user, tính reward và xử lý rút tiền.</li>
+            <li>Áp dụng lock period, paused status và quyền admin.</li>
+            <li>Emit event để frontend cập nhật activity.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>ProtocolFees.sol</h3>
+          <ul>
+            <li>Contract phụ được tách riêng để quản lý phí.</li>
+            <li>Tính claim fee và emergency fee bằng basis points.</li>
+            <li>Cộng dồn protocol fees thành doanh thu cho admin.</li>
+            <li>Giới hạn fee tối đa để tránh cấu hình quá cao.</li>
+          </ul>
+        </div>
+      </div>
+      <pre><code>reward = stakedAmount x rewardRate x elapsedTime / 1e18
+fee = amount x feeBps / 10000</code></pre>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">EthStaking functions</p>
+      <h2>Nhóm stake, reward và rút tiền</h2>
+      <div class="grid two">
+        <div class="box">
+          <h3><code>stake()</code></h3>
+          <ul>
+            <li>Là function <code>payable</code>, nhận native ETH gửi vào contract.</li>
+            <li>Cập nhật <code>accounts[user].balance</code> và <code>totalStaked</code>.</li>
+            <li>Nếu user stake lần đầu, lưu <code>stakeStartTime</code> để tính lock period.</li>
+            <li>Chạy qua <code>updateReward</code> trước khi đổi balance để không mất reward cũ.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3><code>unstake(uint256 amount)</code></h3>
+          <ul>
+            <li>Cho rút một phần hoặc toàn bộ vốn gốc đã stake.</li>
+            <li>Yêu cầu amount hợp lệ, đủ staked balance và đã qua lock period.</li>
+            <li>Giảm <code>accounts[user].balance</code>, giảm <code>totalStaked</code>, rồi chuyển ETH về user.</li>
+            <li>Nếu rút hết, reset <code>stakeStartTime</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">EthStaking functions</p>
+      <h2>Nhóm claim và emergency</h2>
+      <div class="grid two">
+        <div class="box">
+          <h3><code>claimReward(uint256 amount)</code></h3>
+          <ul>
+            <li>Claim một lượng reward cố định thay vì claim reward đang tăng liên tục.</li>
+            <li>Yêu cầu đã qua lock period, amount lớn hơn 0, user đủ reward và reward pool đủ tiền.</li>
+            <li>Gọi <code>_collectProtocolFee</code> để trừ claim fee.</li>
+            <li>Giảm <code>rewardStored</code>, giảm <code>rewardPool</code>, rồi chuyển payout về user.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3><code>emergencyWithdraw()</code></h3>
+          <ul>
+            <li>Cho rút khẩn cấp toàn bộ vốn gốc mà không cần chờ lock period.</li>
+            <li>Xóa <code>balance</code>, <code>rewardStored</code>, <code>stakeStartTime</code> và cập nhật <code>totalStaked</code>.</li>
+            <li>Reward đang chờ bị mất, chỉ tính payout từ vốn gốc sau emergency fee.</li>
+            <li>Gọi <code>_collectProtocolFee</code> rồi chuyển phần còn lại về user.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">EthStaking functions</p>
+      <h2>Nhóm đọc dữ liệu và tính toán</h2>
+      <div class="grid two">
+        <div class="box">
+          <h3><code>earned(address user)</code></h3>
+          <ul>
+            <li>Là view function để tính pending reward hiện tại.</li>
+            <li>Nếu user không còn stake, trả về <code>rewardStored</code>.</li>
+            <li>Nếu còn stake, tính thêm reward mới theo thời gian từ <code>lastUpdateTime</code>.</li>
+            <li>Công thức: stake amount x reward rate x elapsed time / precision.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3><code>getStakeInfo(address user)</code></h3>
+          <ul>
+            <li>Trả về dữ liệu tổng hợp để frontend hiển thị trạng thái staking.</li>
+            <li>Bao gồm staked balance, pending reward, stake start time và unlock time.</li>
+            <li>Không thay đổi state, chỉ đọc dữ liệu từ mapping <code>accounts</code>.</li>
+            <li>Giúp UI không cần gọi nhiều function riêng lẻ.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">EthStaking functions</p>
+      <h2>Nhóm quản trị reward và protocol</h2>
+      <div class="grid two">
+        <div class="box">
+          <h3>Reward pool</h3>
+          <ul>
+            <li><code>fundRewardPool()</code>: admin nạp ETH vào quỹ trả reward.</li>
+            <li><code>withdrawUnusedRewards(amount)</code>: admin rút phần reward pool chưa dùng.</li>
+            <li><code>setRewardRate(newRate)</code>: cập nhật tốc độ reward tăng theo thời gian.</li>
+            <li><code>setLockPeriod(newLockPeriod)</code>: cập nhật thời gian khóa stake/reward.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Safety và fee</h3>
+          <ul>
+            <li><code>pause()</code>: tạm dừng stake, unstake và claim khi có rủi ro.</li>
+            <li><code>unpause()</code>: mở lại protocol sau khi xử lý xong rủi ro.</li>
+            <li><code>setClaimFeeBps(newFeeBps)</code>: cập nhật phí claim reward.</li>
+            <li><code>setEmergencyWithdrawFeeBps(newFeeBps)</code>: cập nhật phí rút khẩn cấp.</li>
+            <li><code>withdrawProtocolFees(amount)</code>: admin rút doanh thu fee đã tích lũy.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">ProtocolFees functions</p>
+      <h2>Contract phụ xử lý phí</h2>
+      <div class="grid two">
+        <div class="box">
+          <h3>Tính và thu phí</h3>
+          <ul>
+            <li><code>_calculateFee(amount, feeBps)</code>: tính fee theo basis points.</li>
+            <li><code>_collectProtocolFee(user, actionType, amount, feeBps)</code>: tính fee, payout và cộng fee vào <code>protocolFees</code>.</li>
+            <li>Emit <code>ProtocolFeeCollected</code> để lịch sử on-chain biết fee đến từ action nào.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Cập nhật và rút phí</h3>
+          <ul>
+            <li><code>_setClaimFeeBps(newFeeBps)</code>: đổi claim fee, không vượt <code>MAX_FEE_BPS</code>.</li>
+            <li><code>_setEmergencyWithdrawFeeBps(newFeeBps)</code>: đổi emergency fee, không vượt <code>MAX_FEE_BPS</code>.</li>
+            <li><code>_withdrawProtocolFeesBalance(amount)</code>: giảm số dư fee trước khi contract chính chuyển ETH cho admin.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Mô hình phí</p>
+      <h2>Cơ chế lợi nhuận cho admin</h2>
+      <div class="grid three">
+        <div class="box">
+          <h3>Basis Points</h3>
+          <p>100 bps = 1%</p>
+          <p>500 bps = 5%</p>
+          <p>1000 bps = 10%</p>
+        </div>
+        <div class="box">
+          <h3>Claim Fee</h3>
+          <p>Khi người dùng claim reward, protocol thu phí từ reward.</p>
+          <pre><code>reward: 0.001
+fee 5%: 0.00005
+user nhận: 0.00095</code></pre>
+        </div>
+        <div class="box">
+          <h3>Emergency Fee</h3>
+          <p>Khi người dùng rút khẩn cấp, protocol thu phí từ vốn gốc.</p>
+          <pre><code>principal: 0.005
+fee 10%: 0.0005
+user nhận: 0.0045</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Bảo mật</p>
+      <h2>Các điểm bảo mật</h2>
+      <div class="grid two">
+        <div class="box green">
+          <h3>Ở smart contract</h3>
+          <ul>
+            <li><code>onlyOwner</code> cho các hàm quản trị.</li>
+            <li><code>Pausable</code> chặn stake/claim/unstake khi có rủi ro.</li>
+            <li><code>ReentrancyGuard</code> cho các hàm chuyển ETH.</li>
+            <li>Checks-effects-interactions.</li>
+            <li>Kiểm soát reward pool để không trả vượt quỹ.</li>
+          </ul>
+        </div>
+        <div class="box yellow">
+          <h3>Ở trải nghiệm sản phẩm</h3>
+          <ul>
+            <li>Popup xác nhận trước các action quan trọng.</li>
+            <li>Hiển thị rõ gas là phí user/admin trả riêng.</li>
+            <li>Giải mã revert reason thành thông báo dễ hiểu.</li>
+            <li>Lịch sử hoạt động và liên kết Etherscan để kiểm tra.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Frontend</p>
+      <h2>Cách frontend hoạt động</h2>
+      <div class="grid two">
+        <div class="box">
+          <h3><code>useContracts.js</code></h3>
+          <ul>
+            <li>Kết nối MetaMask.</li>
+            <li>Tạo <code>ethers.Contract</code> instance.</li>
+            <li>Đọc balance, reward, pool, fee và paused status.</li>
+            <li>Gửi transaction stake/claim/unstake/admin.</li>
+            <li>Quản lý activity history và event logs.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>UI Components</h3>
+          <ul>
+            <li><code>StakingDashboard</code>: protocol + portfolio.</li>
+            <li><code>StakeForm</code>: nhập stake amount và xem expected reward.</li>
+            <li><code>RewardPanel</code>: claim reward và claim fee.</li>
+            <li><code>WithdrawPanel</code>: rút thường/rút khẩn cấp.</li>
+            <li><code>AdminPanel</code>: công cụ quản trị.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">On-chain activity</p>
+      <h2>Event dùng để chứng minh hoạt động</h2>
+      <div class="grid two">
+        <div class="box">
+          <h3>User events</h3>
+          <ul>
+            <li><code>Staked</code>: ghi nhận user đã stake bao nhiêu ETH.</li>
+            <li><code>RewardClaimed</code>: ghi nhận reward thực nhận sau khi trừ phí.</li>
+            <li><code>Unstaked</code>: ghi nhận số vốn gốc user rút bình thường.</li>
+            <li><code>EmergencyWithdrawn</code>: ghi nhận rút khẩn cấp và reward bị mất.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h3>Admin events</h3>
+          <ul>
+            <li><code>RewardPoolFunded</code>: admin nạp tiền vào quỹ thưởng.</li>
+            <li><code>RewardRateUpdated</code> và <code>LockPeriodUpdated</code>: rule của protocol thay đổi.</li>
+            <li><code>ProtocolFeeCollected</code>: protocol thu phí từ user action.</li>
+            <li><code>ProtocolFeesWithdrawn</code>: admin rút doanh thu đã tích lũy.</li>
+          </ul>
+        </div>
+      </div>
+      <p class="footer-note">Frontend đọc các event này để hiển thị activity mà không cần lưu dữ liệu nhạy cảm trong slide.</p>
+    </section>
+
+    <section class="slide">
+      <p class="eyebrow">Kết luận</p>
+      <h2>Kết luận</h2>
+      <div class="grid two">
+        <div class="box green">
+          <h3>Đã đạt được</h3>
+          <ul>
+            <li>DApp full-stack chạy trên Sepolia.</li>
+            <li>Smart contract có staking, reward, fee, pause và bảo mật.</li>
+            <li>Frontend Web3 có MetaMask, giá Chainlink và activity logs.</li>
+            <li>Admin có mô hình doanh thu và bộ công cụ quản trị.</li>
+          </ul>
+        </div>
+        <div class="box red">
+          <h3>Nếu triển khai mainnet</h3>
+          <ul>
+            <li>Cần audit smart contract.</li>
+            <li>Cần multisig/quản lý khóa admin.</li>
+            <li>Cần giám sát và quy trình xử lý sự cố.</li>
+            <li>Cần mô hình kinh tế thực tế, không chỉ demo reward pool.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <nav class="presentation-controls" aria-label="Điều hướng slide">
+    <button type="button" id="prevSlide">Trước</button>
+    <span class="slide-status" id="slideStatus">1 / 1</span>
+    <button type="button" id="nextSlide">Sau</button>
+    <button type="button" id="fullscreenSlide">Toàn màn hình</button>
+  </nav>
+
+  <script>
+    const slides = Array.from(document.querySelectorAll(".slide"));
+    const previousButton = document.getElementById("prevSlide");
+    const nextButton = document.getElementById("nextSlide");
+    const fullscreenButton = document.getElementById("fullscreenSlide");
+    const slideStatus = document.getElementById("slideStatus");
+    const progressBar = document.getElementById("progressBar");
+
+    let currentSlide = 0;
+
+    function readSlideFromHash() {
+      const match = window.location.hash.match(/^#slide-(\d+)$/);
+      if (!match) return 0;
+
+      const requestedSlide = Number(match[1]) - 1;
+      if (Number.isNaN(requestedSlide)) return 0;
+
+      return Math.min(Math.max(requestedSlide, 0), slides.length - 1);
+    }
+
+    function showSlide(index) {
+      currentSlide = Math.min(Math.max(index, 0), slides.length - 1);
+
+      slides.forEach((slide, slideIndex) => {
+        slide.classList.toggle("active", slideIndex === currentSlide);
+      });
+
+      previousButton.disabled = currentSlide === 0;
+      nextButton.disabled = currentSlide === slides.length - 1;
+      slideStatus.textContent = `${currentSlide + 1} / ${slides.length}`;
+      progressBar.style.width = `${((currentSlide + 1) / slides.length) * 100}%`;
+
+      const nextHash = `#slide-${currentSlide + 1}`;
+      if (window.location.hash !== nextHash) {
+        history.replaceState(null, "", nextHash);
+      }
+    }
+
+    function goToNextSlide() {
+      showSlide(currentSlide + 1);
+    }
+
+    function goToPreviousSlide() {
+      showSlide(currentSlide - 1);
+    }
+
+    previousButton.addEventListener("click", goToPreviousSlide);
+    nextButton.addEventListener("click", goToNextSlide);
+
+    if (!document.fullscreenEnabled) {
+      fullscreenButton.hidden = true;
+    }
+
+    fullscreenButton.addEventListener("click", async () => {
+      try {
+        if (!document.fullscreenElement) {
+          await document.documentElement.requestFullscreen();
+          fullscreenButton.textContent = "Thoát toàn màn hình";
+          return;
+        }
+
+        await document.exitFullscreen();
+        fullscreenButton.textContent = "Toàn màn hình";
+      } catch {
+        fullscreenButton.textContent = "Không hỗ trợ";
+        fullscreenButton.disabled = true;
+      }
+    });
+
+    document.addEventListener("fullscreenchange", () => {
+      fullscreenButton.textContent = document.fullscreenElement ? "Thoát toàn màn hình" : "Toàn màn hình";
+    });
+
+    document.addEventListener("keydown", (event) => {
+      const nextKeys = ["ArrowRight", "PageDown", " ", "Enter"];
+      const previousKeys = ["ArrowLeft", "PageUp"];
+
+      if (nextKeys.includes(event.key)) {
+        event.preventDefault();
+        goToNextSlide();
+      }
+
+      if (previousKeys.includes(event.key)) {
+        event.preventDefault();
+        goToPreviousSlide();
+      }
+
+      if (event.key === "Home") {
+        event.preventDefault();
+        showSlide(0);
+      }
+
+      if (event.key === "End") {
+        event.preventDefault();
+        showSlide(slides.length - 1);
+      }
+    });
+
+    window.addEventListener("hashchange", () => {
+      showSlide(readSlideFromHash());
+    });
+
+    showSlide(readSlideFromHash());
+  </script>
+</body>
+</html>
