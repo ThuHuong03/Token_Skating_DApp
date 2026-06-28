@@ -83,16 +83,6 @@ export default function App() {
               emergencyWithdraw={contracts.emergencyWithdraw}
             />
           </section>
-
-          <ActivityHistory
-            activity={contracts.adminActivity}
-            assetSymbol={contracts.assetSymbol}
-            chainId={contracts.chainId}
-            emptyMessage="No on-chain protocol activity found in the recent event window."
-            refreshActivity={contracts.refreshAdminActivity}
-            showActor
-            title="Protocol Activity"
-          />
         </>
       ) : (
         <>
@@ -128,12 +118,17 @@ export default function App() {
             />
           )}
 
-          <ActivityHistory
-            activity={contracts.activity}
-            assetSymbol={contracts.assetSymbol}
-            chainId={contracts.chainId}
-            clearActivity={contracts.clearActivity}
-          />
+          {contracts.account && contracts.isCorrectNetwork && contracts.data.isOwner && (
+            <ActivityHistory
+              activity={contracts.adminActivity}
+              assetSymbol={contracts.assetSymbol}
+              chainId={contracts.chainId}
+              emptyMessage="No on-chain protocol activity found in the recent event window."
+              refreshActivity={contracts.refreshAdminActivity}
+              showActor
+              title="Protocol Activity"
+            />
+          )}
         </>
       )}
     </main>
