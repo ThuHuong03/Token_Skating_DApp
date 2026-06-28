@@ -13,17 +13,24 @@ export function WithdrawPanel({
   emergencyWithdraw,
 }) {
   const [amount, setAmount] = useState("0.005");
+  const selectedAmount = parseAmountToWei(amount);
+  const selectedAmountText = `${formatEth(selectedAmount)} ${assetSymbol}`;
+  const selectedEmergencyFee = calculateFee(selectedAmount, emergencyWithdrawFeeBps);
+  const selectedEmergencyPayout = selectedAmount > selectedEmergencyFee ? selectedAmount - selectedEmergencyFee : 0n;
+  const emergencyFeeRateText = `${(Number(emergencyWithdrawFeeBps || 0n) / 100).toLocaleString(undefined, {
+    maximumFractionDigits: 2,
+  })}%`;
   const stakedBalanceText = `${formatEth(stakedBalance)} ${assetSymbol}`;
   const pendingRewardText = `${formatEth(pendingReward)} ${assetSymbol}`;
-  const selectedUnstakeText = `${amount || "0"} ${assetSymbol}`;
-  const emergencyFee = calculateFee(stakedBalance, emergencyWithdrawFeeBps);
-  const emergencyPayoutText = `${formatEth(stakedBalance - emergencyFee)} ${assetSymbol}`;
-  const emergencyFeeText = `${formatEth(emergencyFee)} ${assetSymbol}`;
+  const fullEmergencyFee = calculateFee(stakedBalance, emergencyWithdrawFeeBps);
+  const fullEmergencyPayout = stakedBalance > fullEmergencyFee ? stakedBalance - fullEmergencyFee : 0n;
+  const fullEmergencyFeeText = `${formatEth(fullEmergencyFee)} ${assetSymbol}`;
+  const fullEmergencyPayoutText = `${formatEth(fullEmergencyPayout)} ${assetSymbol}`;
   const isUnlocked = Boolean(unlockTime) && Date.now() >= unlockTime * 1000;
 
   const handleUnstake = () => {
     const confirmed = window.confirm(
-      `Calling: unstake(${amount || "0"} ${assetSymbol})\n\nExpected receive before gas: ${selectedUnstakeText}\nThis action does not claim rewards.\nYou still pay the network gas fee separately.\n\nIf MetaMask estimated changes shows a different number, use this popup and the final contract event as the source of truth.\n\nContinue?`
+      `Calling: unstake(${amount || "0"} ${assetSymbol})\n\nExpected receive before gas: ${selectedAmountText}\nThis action does not claim rewards.\nYou still pay the network gas fee separately.\n\nIf MetaMask estimated changes shows a different number, use this popup and the final contract event as the source of truth.\n\nContinue?`
     );
 
     if (confirmed) {
@@ -33,7 +40,7 @@ export function WithdrawPanel({
 
   const handleEmergencyWithdraw = () => {
     const confirmed = window.confirm(
-      `Emergency Withdraw exits all principal and forfeits rewards.\n\nPrincipal: ${stakedBalanceText}\nProtocol emergency fee: ${emergencyFeeText}\nExpected receive before gas: ${emergencyPayoutText}\nForfeited reward: ${pendingRewardText}\n\n${isUnlocked ? "Your stake is already unlocked. Claim Reward + Unstake is recommended if you want to keep rewards.\n\n" : ""}You still pay the network gas fee separately. Continue?`
+      `Emergency Withdraw exits all principal and forfeits rewards.\n\nPrincipal: ${stakedBalanceText}\nProtocol emergency fee: ${fullEmergencyFeeText}\nExpected receive before gas: ${fullEmergencyPayoutText}\nForfeited reward: ${pendingRewardText}\n\n${isUnlocked ? "Your stake is already unlocked. Claim Reward + Unstake is recommended if you want to keep rewards.\n\n" : ""}You still pay the network gas fee separately. Continue?`
     );
 
     if (confirmed) {
@@ -51,14 +58,13 @@ export function WithdrawPanel({
             Recommended flow after unlock: Claim Reward first, then Unstake. Emergency Withdraw returns principal only and forfeits rewards.
           </p>
           <div className="mini-stats">
-            <span>Normal unstake receives: <strong>{selectedUnstakeText}</strong></span>
-            <span>Emergency fee: <strong>{emergencyFeeText}</strong></span>
-            <span>Emergency receives: <strong>{emergencyPayoutText}</strong></span>
-            <span>Emergency forfeits reward: <strong>{pendingRewardText}</strong></span>
-            <span>Wallet pays gas: <strong>separately</strong></span>
+            <span>Selected amount: <strong>{selectedAmountText}</strong></span>
+            <span>Normal unstake receives: <strong>{selectedAmountText}</strong></span>
+            <span>Emergency fee ({emergencyFeeRateText}): <strong>{formatEth(selectedEmergencyFee)} {assetSymbol}</strong></span>
+            <span>Emergency receive estimate: <strong>{formatEth(selectedEmergencyPayout)} {assetSymbol}</strong></span>
           </div>
           <p className="muted">
-            MetaMask estimated changes can differ during simulation. The normal unstake transaction sends only the selected amount.
+            Emergency Withdraw always exits the full staked balance. The preview above follows the amount input so the fee rate is easier to understand.
           </p>
         </div>
 
@@ -95,4 +101,17 @@ export function WithdrawPanel({
 
 function calculateFee(amount, feeBps) {
   return ((amount || 0n) * (feeBps || 0n)) / 10000n;
+}
+
+function parseAmountToWei(amount) {
+  const normalized = String(amount || "").trim();
+  if (!/^\d*(\.\d*)?$/.test(normalized)) {
+    return 0n;
+  }
+
+  const [whole = "0", fraction = ""] = normalized.split(".");
+  const safeWhole = whole || "0";
+  const safeFraction = fraction.slice(0, 18).padEnd(18, "0");
+
+  return BigInt(safeWhole) * 10n ** 18n + BigInt(safeFraction || "0");
 }

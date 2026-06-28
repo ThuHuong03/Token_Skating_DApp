@@ -83,6 +83,13 @@ export default function App() {
               emergencyWithdraw={contracts.emergencyWithdraw}
             />
           </section>
+
+          <ActivityHistory
+            activity={contracts.activity}
+            assetSymbol={contracts.assetSymbol}
+            chainId={contracts.chainId}
+            clearActivity={contracts.clearActivity}
+          />
         </>
       ) : (
         <>

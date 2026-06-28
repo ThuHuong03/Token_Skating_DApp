@@ -439,8 +439,14 @@ export function useContracts() {
 
   const emergencyWithdraw = useCallback(async () => {
     if (!staking) return;
-    await runTransaction({ type: "emergencyWithdraw", label: "Emergency withdraw" }, () => staking.emergencyWithdraw());
-  }, [runTransaction, staking]);
+    const emergencyFee = calculateFee(data.stakedBalance, data.emergencyWithdrawFeeBps);
+    const emergencyPayout = data.stakedBalance - emergencyFee;
+
+    await runTransaction(
+      { type: "emergencyWithdraw", label: "Emergency withdraw", amount: emergencyPayout.toString() },
+      () => staking.emergencyWithdraw()
+    );
+  }, [data.emergencyWithdrawFeeBps, data.stakedBalance, runTransaction, staking]);
 
   const fundRewardPool = useCallback(
     async (amount) => {
@@ -604,6 +610,10 @@ export function useContracts() {
     staking.on("RewardPoolFunded", handleContractUpdate);
     staking.on("RewardRateUpdated", handleContractUpdate);
     staking.on("LockPeriodUpdated", handleContractUpdate);
+    staking.on("ClaimFeeUpdated", handleContractUpdate);
+    staking.on("EmergencyWithdrawFeeUpdated", handleContractUpdate);
+    staking.on("ProtocolFeeCollected", handleContractUpdate);
+    staking.on("ProtocolFeesWithdrawn", handleContractUpdate);
 
     return () => {
       staking.off("Paused", handleProtocolStatusUpdate);
@@ -615,6 +625,10 @@ export function useContracts() {
       staking.off("RewardPoolFunded", handleContractUpdate);
       staking.off("RewardRateUpdated", handleContractUpdate);
       staking.off("LockPeriodUpdated", handleContractUpdate);
+      staking.off("ClaimFeeUpdated", handleContractUpdate);
+      staking.off("EmergencyWithdrawFeeUpdated", handleContractUpdate);
+      staking.off("ProtocolFeeCollected", handleContractUpdate);
+      staking.off("ProtocolFeesWithdrawn", handleContractUpdate);
     };
   }, [isTransactionPending, refresh, refreshAdminActivity, refreshProtocolStatus, staking]);
 
@@ -862,6 +876,10 @@ function calculateLiveReward(data) {
   const liveAccrued = (data.stakedBalance * data.rewardRate * elapsed) / REWARD_PRECISION;
 
   return data.pendingReward + liveAccrued;
+}
+
+function calculateFee(amount, feeBps) {
+  return ((amount || ZERO) * (feeBps || ZERO)) / 10000n;
 }
 
 function parseEthInput(amount, setError) {
